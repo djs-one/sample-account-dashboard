@@ -8,7 +8,7 @@ def get_data():
     sheets = xl.sheet_names
     dfd = {sheet: pd.read_excel(xl, sheet).assign(account=sheet[-1]) for sheet in sheets}
     df = pd.concat(dfd, ignore_index=True)
-
+    df["DateTime"] = pd.to_datetime(df["DateTime"])
     return df
 
 df = get_data()
