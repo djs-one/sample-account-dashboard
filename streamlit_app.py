@@ -15,8 +15,12 @@ df = get_data()
 
 st.title("Sample Dashboard")
 
+# Create checkboxes to 
 st.write("Accounts")
 for account in df["account"].unique():
     st.checkbox(account)
 
-st.line_chart(df)
+cols = df.columns[1:-1]
+for col in cols:
+    st.header(col)
+    st.line_chart(df, x="DateTime", y=col)
