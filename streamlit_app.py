@@ -2,6 +2,8 @@ import os
 
 import pandas as pd
 import streamlit as st
+import plotly.express as px
+
 
 def get_data():
     xl = pd.ExcelFile("data/example.xlsx")
@@ -23,4 +25,6 @@ for account in df["account"].unique():
 cols = df.columns[1:-1]
 for col in cols:
     st.header(col)
-    st.line_chart(df, x="DateTime", y=col)
+    fig = px.line(df, x='DateTime', y=col, color='account')
+    st.plotly_chart(fig)
+                
