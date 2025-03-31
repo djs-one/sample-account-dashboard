@@ -11,7 +11,12 @@ def get_data():
 
     return df
 
+df = get_data()
+
 st.title("Sample Dashboard")
-st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-)
+
+st.write("Accounts")
+for account in df["account"].unique():
+    st.checkbox(account)
+
+st.linechart(df)
