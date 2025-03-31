@@ -19,4 +19,4 @@ st.write("Accounts")
 for account in df["account"].unique():
     st.checkbox(account)
 
-st.linechart(df)
+st.line_chart(df)
