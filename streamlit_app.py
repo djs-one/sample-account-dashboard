@@ -23,22 +23,22 @@ def get_data():
             out[col] = df[acct1][col]
         except AssertionError:
             for acct in accts:
-                out[f"{acct}-{col}"] = df[acct][col]
+                out[acct] = df[acct][col]
 
     return df
 
-df = get_data()
 
-st.title("Sample Dashboard")
+if __name__ == "__main__":
+    df = get_data()
 
-# Create checkboxes to 
-st.write("Accounts")
-for account in df["account"].unique():
-    st.checkbox(account)
+    st.title("Sample Dashboard")
 
-cols = df.columns[1:-1]
-for col in cols:
-    st.header(col)
-    fig = px.line(df, x='DateTime', y=col, color='account')
-    st.plotly_chart(fig)
-                
+    # Create checkboxes to 
+    st.write("Accounts")
+
+    cols = df.columns[1:-1]
+    for col in cols:
+        st.header(col)
+        fig = px.line(df, x='DateTime', y=col, color='account')
+        st.plotly_chart(fig)
+
