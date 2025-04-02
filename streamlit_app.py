@@ -59,12 +59,15 @@ if __name__ == "__main__":
 
     dfd = get_data()
 
-    #for i, val in enumerate(["Spot Price", "Temperature"]):
-    #chart = alt.Chart(dfd["Spot Price"]).mark_line().encode(x="DateTime", y="Spot Price")
+    # Time Series
+    chart = alt.Chart(dfd["Spot Price"]).mark_line().encode(x="DateTime", y="Spot Price")
+    st.altair_chart(chart)
+
+    # YOY Chart
     chart = alt.Chart(dfd["Spot Price"]).mark_line().encode(
         x=alt.X('monthdate(DateTime):O').title('Date'),
-        y="Spot Price"
+        y="Spot Price",
+        color=alt.Color("year(DateTime):O").title("Year")
         )
-
-        
     st.altair_chart(chart)
+  
