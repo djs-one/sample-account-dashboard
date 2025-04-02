@@ -55,9 +55,9 @@ def get_figs(dfd):
 
 if __name__ == "__main__":
     st.title("Sample Dashboard")
-    st.header("Accounts")
-
     dfd = get_data()
+
+    st.header("Spot Prices")
 
     # Time Series
     chart = alt.Chart(dfd["Spot Price"]).mark_line().encode(x="DateTime", y="Spot Price")
@@ -71,3 +71,6 @@ if __name__ == "__main__":
         )
     st.altair_chart(chart)
   
+    st.header("Accounts")
+
+    
