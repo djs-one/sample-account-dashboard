@@ -79,7 +79,17 @@ if __name__ == "__main__":
         horizontal=True,
     )
 
-    # hrs = dfd["Spot Price"].reset_index()["DateTime"].apply(lambda x: x.time()).unique()
+    methodd = {"Mean": "mean", "Median": "median", "Minimum": "min", "Maximum": "max"}
+    method_radio = radiocols[1].radio("Method", list(methodd.keys()), horizontal=True)
+
+    test = """if method_radio == "Time":
+        hrs = (
+            dfd["Spot Price"]
+            .reset_index()["DateTime"]
+            .apply(lambda x: x.time())
+            .unique()
+        )
+        hrsbox = st.selectbox("Hour to use", options=hrs, index=12)"""
 
     rows = st.columns(2) + st.columns(2) + st.columns(2)
 
