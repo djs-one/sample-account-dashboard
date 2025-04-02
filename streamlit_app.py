@@ -71,10 +71,13 @@ if __name__ == "__main__":
     }
 
     # Frequency
-    freq_radio = st.radio(
+    radiocols = st.columns(2)
+    freq_radio = radiocols[0].radio(
         "Time Frequency", ["Monthly", "Weekly", "Daily", "Hourly"], index=2
     )
-    method_radio = st.radio("Method", ["Mean", "Median", "Minimum", "Maximum", "Time"])
+    method_radio = radiocols[0].radio(
+        "Method", ["Mean", "Median", "Minimum", "Maximum", "Time"]
+    )
 
     hrs = dfd["Spot Price"].reset_index()["DateTime"].apply(lambda x: x.time()).unique()
 
@@ -85,7 +88,7 @@ if __name__ == "__main__":
 
         # Time Series
         histdf = pd.DataFrame()
-        funcs = ["min", "max", "mean"]
+        funcs = ["sum"] if title == "Consumption" else ["min", "max", "mean"]
         for func in funcs:
             df = dfd[title].reset_index()
 
@@ -106,8 +109,10 @@ if __name__ == "__main__":
         rows[i].line_chart(
             histdf.reset_index(),
             x="DateTime",
-            y=["min", "max", "mean"],
+            y=funcs,
             color="account" if "account" in histdf.columns else None,
+            y_label=title,
+            x_label=None,
         )
 
         yoydf = df.resample(f"1{freqd[freq_radio]}", on="DateTime").apply(
