@@ -51,10 +51,14 @@ def get_figs(dfd):
     #    fig.add_trace(px.line(dfd[val], x="DateTime", y=val), col=i, row=1)
         chart = alt.Chart(dfd[val]).mark_line().encode(x="DateTime", y=val)
         st.altair_chart(chart)
+    
 
 if __name__ == "__main__":
     st.title("Sample Dashboard")
     st.header("Accounts")
 
     dfd = get_data()
-    figs = get_figs(dfd)
+    
+    for i, val in enumerate(["Spot Price", "Temperature"]):
+        chart = alt.Chart(dfd[val]).mark_line().encode(x="DateTime", y=val)
+        st.altair_chart(chart)
