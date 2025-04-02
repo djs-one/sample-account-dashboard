@@ -26,16 +26,16 @@ def get_data():
             if dfd.get(col) is not None:
 
                 # If added, confirm new values in that column
+                # Ex. don't duplicate temperature columns if equal
                 if out[dfd.get(col) != out].any():
                     dfs = [dfd[col], out]  # DataFrame list
                     for i, _sr in enumerate(dfs):
                         name = _sr.name.split("-")
                         _df = _sr.to_frame()
-                        _df[name[0]] = name[1]
+                        _df[name[0]] = int(name[1])
                         _df = _df.rename(columns={_sr.name: col})
                         dfs[i] = _df
                     out = pd.concat(dfs)
-                    
 
                 # Reset names in duplicated series
                 else:
@@ -44,56 +44,85 @@ def get_data():
 
     return dfd
 
+
 def get_figs(dfd):
     for i, val in enumerate(["Spot Price", "Temperature"]):
-    #    fig.add_trace(px.line(dfd[val], x="DateTime", y=val), col=i, row=1)
+        #    fig.add_trace(px.line(dfd[val], x="DateTime", y=val), col=i, row=1)
         chart = alt.Chart(dfd[val]).mark_line().encode(x="DateTime", y=val)
         st.altair_chart(chart)
-    
+
+
 def set_frequency():
     pass
+
 
 if __name__ == "__main__":
     st.title("Sample Dashboard")
     dfd = get_data()
 
     st.header("Spot Prices")
-    
+
     freqd = {
-        "Hour": "h",
-        "Day": "d",
-        "Week": "w",
-        "Month": "m",
+        "Hourly": "h",
+        "Daily": "d",
+        "Weekly": "W",
+        "Monthly": "ME",
     }
 
     # Frequency
-    freq_radio = st.radio("Time Frequency", ["Month", "Week", "Daily", "Hour"])
+    freq_radio = st.radio(
+        "Time Frequency", ["Monthly", "Weekly", "Daily", "Hourly"], index=2
+    )
     method_radio = st.radio("Method", ["Mean", "Median", "Minimum", "Maximum", "Time"])
 
     hrs = dfd["Spot Price"].reset_index()["DateTime"].apply(lambda x: x.time()).unique()
 
-    spotcharts = {}
+    row1 = st.columns(3)
+    row2 = st.columns(3)
 
+    # Create chart in each of 3 columns
+    for i, (title, df) in enumerate(dfd.items()):
 
-    col1, col2 = st.columns(2)
-
-    with col1:
         # Time Series
-        spothist = dfd["Spot Price"].resample("")
-        spotcharts["History"] = alt.Chart().mark_line().encode(x="DateTime", y="Spot Price")
-        st.altair_chart(spotcharts["History"], title="History") 
+        histdf = pd.DataFrame()
+        funcs = ["min", "max", "mean"]
+        for func in funcs:
+            df = dfd[title].reset_index()
 
-    with col2:
+            histdf[func] = df.resample(f"1{freqd[freq_radio]}", on="DateTime")[
+                title
+            ].apply(func)
 
-        # YOY Chart
-        spotcharts["Annual Comparison"] = alt.Chart(dfd["Spot Price"]).mark_line().encode(
-            x=alt.X('monthdate(DateTime):O').title('Date'),
-            y="Spot Price",
-            color=alt.Color("year(DateTime):O").title("Year")
+        histchart = (
+            alt.Chart(histdf.melt(ignore_index=False).reset_index())
+            .mark_line()
+            .encode(
+                x=alt.X("yearmonthdate(DateTime):O").title("Date"),
+                y=alt.Y("value").title(title),
+                color="variable",
             )
-        st.altair_chart(spotcharts["Annual Comparison"], title="Annual Comparison") 
+        )
+        # row1[0].altair_chart(histchart)
+        row1[0].line_chart(
+            histdf.reset_index(),
+            x="DateTime",
+            y=["min", "max", "mean"],
+            color="account" if "account" in histdf.columns else None,
+        )
 
+        yoydf = df.resample(f"1{freqd[freq_radio]}", on="DateTime").apply(
+            method_radio.lower()
+        )
 
-    st.header("Accounts")
+        color = alt.Color("year(DateTime):O").title("Year")
+        if "account" in histdf.columns:
+            color += ["account"]
 
-    
+        yoy = (
+            alt.Chart(yoydf)
+            .mark_line()
+            .encode(
+                x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
+            )
+        )
+        row2[1].altair_chart(yoy)
