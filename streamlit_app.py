@@ -126,7 +126,7 @@ if __name__ == "__main__":
         )
 
         yoydf = df.resample(f"1{freqd[freq_radio]}", on="DateTime").apply(
-            method_radio.lower()
+            methodd[method_radio]
         )
 
         color = alt.Color("year(DateTime):O").title("Year")
