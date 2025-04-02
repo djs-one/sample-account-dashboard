@@ -91,10 +91,7 @@ if __name__ == "__main__":
         )
         hrsbox = st.selectbox("Hour to use", options=hrs, index=12)"""
 
-    rows = [st.columns(2)] + [st.columns(2)] + [st.columns(2)]
-
-    col1 = [row[0] for row in rows]
-    col2 = [row[1] for row in rows]
+    rows = [st.columns(2) for n in range(3)]
 
     # Create chart in each of 3 columns
     for i, (title, df) in enumerate(dfd.items()):
@@ -119,7 +116,7 @@ if __name__ == "__main__":
             )
         )
         # row1[0].altair_chart(histchart)
-        col1[i].line_chart(
+        rows[0][i].line_chart(
             histdf.reset_index(),
             x="DateTime",
             y=funcs,
@@ -143,4 +140,4 @@ if __name__ == "__main__":
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
             )
         )
-        col2[i + 1].altair_chart(yoy)
+        rows[1][i].altair_chart(yoy)
