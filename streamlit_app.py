@@ -40,37 +40,60 @@ def get_data():
                 # Reset names in duplicated series
                 else:
                     out.name = col
-                    out = out.reset_index()
             dfd[col] = out
 
     return dfd
 
 def get_figs(dfd):
-    #fig = make_subplots(rows=3, cols=3)
     for i, val in enumerate(["Spot Price", "Temperature"]):
     #    fig.add_trace(px.line(dfd[val], x="DateTime", y=val), col=i, row=1)
         chart = alt.Chart(dfd[val]).mark_line().encode(x="DateTime", y=val)
         st.altair_chart(chart)
     
+def set_frequency():
+    pass
 
 if __name__ == "__main__":
     st.title("Sample Dashboard")
     dfd = get_data()
 
     st.header("Spot Prices")
+    
+    freqd = {
+        "Hour": "h",
+        "Day": "d",
+        "Week": "w",
+        "Month": "m",
+    }
 
-    # Time Series
-    chart = alt.Chart(dfd["Spot Price"]).mark_line().encode(x="DateTime", y="Spot Price")
-    st.altair_chart(chart)
+    # Frequency
+    freq_radio = st.radio("Time Frequency", ["Month", "Week", "Daily", "Hour"])
+    method_radio = st.radio("Method", ["Mean", "Median", "Minimum", "Maximum", "Time"])
 
-    # YOY Chart
-    chart = alt.Chart(dfd["Spot Price"]).mark_line().encode(
-        x=alt.X('monthdate(DateTime):O').title('Date'),
-        y="Spot Price",
-        color=alt.Color("year(DateTime):O").title("Year")
-        )
-    st.altair_chart(chart)
-  
+    hrs = dfd["Spot Price"].reset_index()["DateTime"].apply(lambda x: x.time()).unique()
+
+    spotcharts = {}
+
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Time Series
+        spothist = dfd["Spot Price"].resample("")
+        spotcharts["History"] = alt.Chart().mark_line().encode(x="DateTime", y="Spot Price")
+        st.altair_chart(spotcharts["History"], title="History") 
+
+    with col2:
+
+        # YOY Chart
+        spotcharts["Annual Comparison"] = alt.Chart(dfd["Spot Price"]).mark_line().encode(
+            x=alt.X('monthdate(DateTime):O').title('Date'),
+            y="Spot Price",
+            color=alt.Color("year(DateTime):O").title("Year")
+            )
+        st.altair_chart(spotcharts["Annual Comparison"], title="Annual Comparison") 
+
+
     st.header("Accounts")
 
     
