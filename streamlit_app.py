@@ -57,6 +57,7 @@ def set_frequency():
 
 
 if __name__ == "__main__":
+    st.set_page_config(layout="wide")
     st.title("Sample Dashboard")
     dfd = get_data()
 
