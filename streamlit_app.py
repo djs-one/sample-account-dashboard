@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # Frequency
     radiocols = st.columns(2)
     freq_radio = radiocols[0].radio(
-        "Time Frequency", ["Monthly", "Weekly", "Daily", "Hourly"], index=2
+        "Time Frequency", ["Monthly", "Weekly", "Daily", "Hourly"], index=1
     )
     method_radio = radiocols[0].radio(
         "Method", ["Mean", "Median", "Minimum", "Maximum", "Time"]
@@ -81,7 +81,8 @@ if __name__ == "__main__":
 
     hrs = dfd["Spot Price"].reset_index()["DateTime"].apply(lambda x: x.time()).unique()
 
-    rows = st.columns(3) + st.columns(3)
+    row1 = st.columns(3)
+    row2 = st.columns(3)
 
     # Create chart in each of 3 columns
     for i, (title, df) in enumerate(dfd.items()):
@@ -106,7 +107,7 @@ if __name__ == "__main__":
             )
         )
         # row1[0].altair_chart(histchart)
-        rows[i].line_chart(
+        row1[i].line_chart(
             histdf.reset_index(),
             x="DateTime",
             y=funcs,
@@ -130,4 +131,4 @@ if __name__ == "__main__":
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
             )
         )
-        rows[i + 1].altair_chart(yoy)
+        row2[i].altair_chart(yoy)
