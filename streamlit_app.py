@@ -77,8 +77,7 @@ if __name__ == "__main__":
 
     hrs = dfd["Spot Price"].reset_index()["DateTime"].apply(lambda x: x.time()).unique()
 
-    row1 = st.columns(3)
-    row2 = st.columns(3)
+    rows = st.columns(3) + st.columns(3)
 
     # Create chart in each of 3 columns
     for i, (title, df) in enumerate(dfd.items()):
@@ -103,7 +102,7 @@ if __name__ == "__main__":
             )
         )
         # row1[0].altair_chart(histchart)
-        row1[0].line_chart(
+        rows[i].line_chart(
             histdf.reset_index(),
             x="DateTime",
             y=["min", "max", "mean"],
@@ -125,4 +124,4 @@ if __name__ == "__main__":
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
             )
         )
-        row2[1].altair_chart(yoy)
+        rows[i + 1].altair_chart(yoy)
