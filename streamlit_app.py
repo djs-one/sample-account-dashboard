@@ -123,7 +123,7 @@ if __name__ == "__main__":
         # Filter to account if one selected
         if isinstance(acct_radio, int) and "account" in df.columns:
             df = df[df["account"] == acct_radio]
-        df = df.drop(columns="account")
+        df = df.drop(columns="account", errors="ignore")
 
         yoydf = (
             df.resample(f"1{freqd[freq_radio]}", on="DateTime")
