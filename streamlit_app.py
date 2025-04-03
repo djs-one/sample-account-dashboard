@@ -121,7 +121,7 @@ if __name__ == "__main__":
         )
 
         # Filter to account if one selected
-        if isinstance(acct_radio, int):
+        if isinstance(acct_radio, int) and "account" in df.columns:
             df = df[df["account"] == acct_radio]
         df = df.drop(columns="account")
 
@@ -142,5 +142,4 @@ if __name__ == "__main__":
                 color=alt.Color("year(DateTime):O").title("Year"),
             )
         )
-
         rows[1].altair_chart(yoy)
