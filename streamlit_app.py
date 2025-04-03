@@ -145,18 +145,23 @@ if __name__ == "__main__":
         rows[1].altair_chart(yoy)
 
     st.header("Correlations", divider=True)
-    corrows = st.columns(3)
 
     # Create a scatter plot with relationship between prices and temp
     spottemp = pd.concat([dfd["Spot Price"], dfd["Temperature"]], axis=1)
-    corrows[0].scatter_chart(spottemp, x="Temperature", y="Spot Price")
+    st.scatter_chart(spottemp, x="Temperature", y="Spot Price")
 
     # Get consumption - compare to temp/price
     con = dfd["Consumption"]
 
-    for i, col in enumerate(["Temperature", "Spot Price"]):
-        df = con.merge(dfd[col], left_index=True, right_index=True)
-        corrows[i + 1].scatter_chart(df, x=col, y="Consumption", color="account")
+    for acctnum in [1, 2]:
+        st.subheader(f"Account {acctnum}")
+        rows = st.columns(2)
+        for i, col in enumerate(["Temperature", "Spot Price"]):
+
+            df = con[con["account"] == acctnum].merge(
+                dfd[col], left_index=True, right_index=True
+            )
+            rows[i].scatter_chart(df, x=col, y="Consumption")
 
     # Frequency radio button for account bar chart
     radiocol2 = st.columns(2)
