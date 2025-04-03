@@ -166,19 +166,13 @@ if __name__ == "__main__":
     # Frequency radio button for account bar chart
     radiocol2 = st.columns(2)
     freq_radio2 = radiocol2[0].radio(
-        "Time Frequency",
+        "Time Frequency for Account Data",
         ["Monthly", "Weekly", "Daily", "Hourly"],
         index=1,
         horizontal=True,
     )
-    method_radio = radiocol2[1].radio("Method", list(methodd.keys()), horizontal=True)
-
     st.header("Account comparison", divider=True)
-    accts = (
-        dfd["Consumption"]
-        .resample(f"1{freqd[freq_radio2]}")
-        .apply(methodd[method_radio])
-    )
+    accts = dfd["Consumption"].resample(f"1{freqd[freq_radio2]}").sum()
 
     st.bar_chart(
         accts.reset_index(), x="DateTime", y="Consumption", color="account", stack=True
