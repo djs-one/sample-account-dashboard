@@ -116,7 +116,7 @@ if __name__ == "__main__":
             x_label=None,
         )
 
-    for i, (title, df) in enumerate(dfd.items()):
+        # for i, (title, df) in enumerate(dfd.items()):
         if acct_radio == "Sum":
             df = df[df["account"] == acct_radio].drop(columns="account")
 
