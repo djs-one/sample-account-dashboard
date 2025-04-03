@@ -123,16 +123,14 @@ if __name__ == "__main__":
         )
 
     for i, (title, df) in enumerate(dfd.items()):
-        yoydf = df.resample(f"1{freqd[freq_radio]}", on="DateTime").apply(
-            methodd[method_radio]
-        )
+        yoydf = df.resample(f"1{freqd[freq_radio]}")[title].apply(methodd[method_radio])
 
         color = alt.Color("year(DateTime):O").title("Year")
         if "account" in histdf.columns:
             color += ["account"]
 
         yoy = (
-            alt.Chart(yoydf)
+            alt.Chart(yoydf.reset_index())
             .mark_line()
             .encode(
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
