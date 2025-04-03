@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     rows = [st.columns(2) for n in range(3)]
 
-    # Create chart in each of 3 columns
+    # Create time series chart
     for i, (title, df) in enumerate(dfd.items()):
 
         # Time Series
@@ -115,7 +115,6 @@ if __name__ == "__main__":
                 color="variable",
             )
         )
-        # row1[0].altair_chart(histchart)
         rows[i][0].line_chart(
             histdf.reset_index(),
             x="DateTime",
@@ -125,6 +124,7 @@ if __name__ == "__main__":
             x_label=None,
         )
 
+    for i, (title, df) in enumerate(dfd.items()):
         yoydf = df.resample(f"1{freqd[freq_radio]}", on="DateTime").apply(
             methodd[method_radio]
         )
