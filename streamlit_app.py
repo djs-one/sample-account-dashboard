@@ -121,7 +121,7 @@ if __name__ == "__main__":
             df = df[df["account"] == acct_radio].drop(columns="account")
 
         yoydf = (
-            df.resample(f"1{freqd[freq_radio]}")
+            df.resample(f"1{freqd[freq_radio]}", on="DateTime")
             .apply(methodd[method_radio])
             .reset_index()
         )
