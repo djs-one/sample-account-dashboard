@@ -151,14 +151,12 @@ if __name__ == "__main__":
     spottemp = pd.concat([dfd["Spot Price"], dfd["Temperature"]], axis=1)
     corrows[0].scatter_chart(spottemp, x="Temperature", y="Spot Price")
 
-    # Get consumption
-    con = dfd["Consumption"]["Consumption"]
+    # Get consumption - compare to temp/price
+    con = dfd["Consumption"]
 
-    contemp = pd.concat([con, dfd["Temperature"]], axis=1)
-    corrows[1].scatter_chart(contemp, x="Temperature", y="Consumption", color="account")
-
-    conspot = pd.concat([con, dfd["Spot Price"]], axis=1)
-    corrows[2].scatter_chart(conspot, x="Spot Price", y="Consumption", color="account")
+    for i, col in enumerate(["Temperature", "Spot Price"]):
+        df = con.merge(dfd[col], left_index=True, right_index=True)
+        corrows[i + 1].scatter_chart(df, x=col, y="Consumption", color="account")
 
     st.header("Account comparison")
     accts = dfd["Consumption"]
