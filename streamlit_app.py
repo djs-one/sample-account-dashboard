@@ -72,7 +72,7 @@ if __name__ == "__main__":
     }
 
     # Frequency
-    radiocols = st.columns(2)
+    radiocols = st.columns(3)
     freq_radio = radiocols[0].radio(
         "Time Frequency",
         ["Monthly", "Weekly", "Daily", "Hourly"],
@@ -83,14 +83,7 @@ if __name__ == "__main__":
     methodd = {"Mean": "mean", "Median": "median", "Minimum": "min", "Maximum": "max"}
     method_radio = radiocols[1].radio("Method", list(methodd.keys()), horizontal=True)
 
-    test = """if method_radio == "Time":
-        hrs = (
-            dfd["Spot Price"]
-            .reset_index()["DateTime"]
-            .apply(lambda x: x.time())
-            .unique()
-        )
-        hrsbox = st.selectbox("Hour to use", options=hrs, index=12)"""
+    acct_radio = radiocols[2].radio("Accounts", [1, 2, "Sum"], horizontal=True)
 
     # Create time series chart
     for i, (title, df) in enumerate(dfd.items()):
@@ -124,22 +117,25 @@ if __name__ == "__main__":
         )
 
     for i, (title, df) in enumerate(dfd.items()):
-        agg = {title: methodd[method_radio]}
+        if acct_radio == "Sum":
+            df = df[df["account"] == acct_radio].drop(columns="account")
 
-        if getattr(df, "columns", None) is not None:
-            agg["account"] = "first"
+        yoydf = (
+            df.resample(f"1{freqd[freq_radio]}")
+            .apply(methodd[method_radio])
+            .reset_index()
+        )
+        yoydf["DateTime"] = yoydf.reset_index()["DateTime"].apply(pd.to_datetime)
 
-        yoydf = df.resample(f"1{freqd[freq_radio]}").agg(agg)
-
-        color = alt.Color("year(DateTime):O").title("Year")
-        if "account" in histdf.columns:
-            color += ["account"]
-
+        # Create chart
         yoy = (
-            alt.Chart(yoydf.reset_index())
+            alt.Chart(yoydf)
             .mark_line()
             .encode(
-                x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
+                x=alt.X("monthdate(DateTime):O").title("Date"),
+                y=title,
+                color=alt.Color("year(DateTime):O").title("Year"),
             )
         )
+
         rows[1].altair_chart(yoy)
