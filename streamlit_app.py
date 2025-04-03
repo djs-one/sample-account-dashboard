@@ -84,7 +84,7 @@ if __name__ == "__main__":
     method_radio = radiocols[1].radio("Method", list(methodd.keys()), horizontal=True)
 
     # Radio button to select accounts
-    acct_radio = radiocols[2].radio("Accounts", [1, 2, "Sum"], horizontal=True, index=3)
+    acct_radio = radiocols[2].radio("Accounts", [1, 2, "Sum"], horizontal=True, index=2)
 
     st.header("Basic time series", divider=True)
 
