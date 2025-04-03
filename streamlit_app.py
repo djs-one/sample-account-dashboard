@@ -91,11 +91,9 @@ if __name__ == "__main__":
         )
         hrsbox = st.selectbox("Hour to use", options=hrs, index=12)"""
 
-    rows = [st.columns(2) for n in range(3)]
-
     # Create time series chart
     for i, (title, df) in enumerate(dfd.items()):
-
+        rows = st.columns(2)
         # Time Series
         histdf = pd.DataFrame()
         funcs = ["sum"] if title == "Consumption" else ["min", "max", "mean"]
@@ -115,7 +113,7 @@ if __name__ == "__main__":
                 color="variable",
             )
         )
-        rows[i][0].line_chart(
+        rows[0].line_chart(
             histdf.reset_index(),
             x="DateTime",
             y=funcs,
@@ -140,4 +138,4 @@ if __name__ == "__main__":
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
             )
         )
-        rows[i][1].altair_chart(yoy)
+        rows[1].altair_chart(yoy)
