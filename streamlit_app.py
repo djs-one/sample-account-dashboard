@@ -158,5 +158,8 @@ if __name__ == "__main__":
         df = con.merge(dfd[col], left_index=True, right_index=True)
         corrows[i + 1].scatter_chart(df, x=col, y="Consumption", color="account")
 
-    st.header("Account comparison")
+    st.header("Account comparison", divider=True)
     accts = dfd["Consumption"]
+    st.bar_chart(
+        accts.reset_index(), x="DateTime", y="Consumption", color="account", stack=True
+    )
