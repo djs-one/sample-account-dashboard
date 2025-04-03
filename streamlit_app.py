@@ -62,7 +62,7 @@ if __name__ == "__main__":
     st.title("Sample Dashboard")
     dfd = get_data()
 
-    st.header("Spot Prices")
+    st.header("Settings", divider=True)
 
     freqd = {
         "Hourly": "h",
@@ -83,10 +83,14 @@ if __name__ == "__main__":
     methodd = {"Mean": "mean", "Median": "median", "Minimum": "min", "Maximum": "max"}
     method_radio = radiocols[1].radio("Method", list(methodd.keys()), horizontal=True)
 
+    # Radio button to select accounts
     acct_radio = radiocols[2].radio("Accounts", [1, 2, "Sum"], horizontal=True)
+
+    st.header("Basic time series", divider=True)
 
     # Create time series chart
     for i, (title, df) in enumerate(dfd.items()):
+        st.subheader(title)
         rows = st.columns(2)
         # Time Series
         histdf = pd.DataFrame()
@@ -116,9 +120,10 @@ if __name__ == "__main__":
             x_label=None,
         )
 
-        # for i, (title, df) in enumerate(dfd.items()):
-        if acct_radio == "Sum":
-            df = df[df["account"] == acct_radio].drop(columns="account")
+        # Filter to account if one selected
+        if isinstance(acct_radio, int):
+            df = df[df["account"] == acct_radio]
+        df = df.drop(columns="account")
 
         yoydf = (
             df.resample(f"1{freqd[freq_radio]}", on="DateTime")
