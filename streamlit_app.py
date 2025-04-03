@@ -155,10 +155,14 @@ if __name__ == "__main__":
     con = dfd["Consumption"]
     con = con[con["account"] == acct_radio]["Consumption"]
     if con.empty:
-        con = dfd["Consumption"]["Consumption"].resample(f"1{freqd[freq_radio]}")
+        con = (
+            dfd["Consumption"]["Consumption"]
+            .resample(f"1{freqd[freq_radio]}")
+            .apply(method_radio.lower())
+        )
 
     contemp = pd.concat([con, dfd["Temperature"]], axis=1)
-    corrows[1].scatter_chart(spottemp, x="Temperature", y="Consumption")
+    corrows[1].scatter_chart(contemp, x="Temperature", y="Consumption")
 
     conspot = pd.concat([con, dfd["Spot Price"]], axis=1)
-    corrows[2].scatter_chart(spottemp, x="Spot Price", y="Consumption")
+    corrows[2].scatter_chart(conspot, x="Spot Price", y="Consumption")
