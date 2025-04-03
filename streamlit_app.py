@@ -136,7 +136,7 @@ if __name__ == "__main__":
             color += ["account"]
 
         yoy = (
-            alt.Chart(yoydf)
+            alt.Chart(yoydf.reset_index())
             .mark_line()
             .encode(
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
