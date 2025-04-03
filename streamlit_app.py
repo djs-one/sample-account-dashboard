@@ -84,7 +84,7 @@ if __name__ == "__main__":
     method_radio = radiocols[1].radio("Method", list(methodd.keys()), horizontal=True)
 
     # Radio button to select accounts
-    acct_radio = radiocols[2].radio("Accounts", [1, 2, "Sum"], horizontal=True)
+    acct_radio = radiocols[2].radio("Accounts", [1, 2, "Sum"], horizontal=True, index=3)
 
     st.header("Basic time series", divider=True)
 
@@ -143,3 +143,22 @@ if __name__ == "__main__":
             )
         )
         rows[1].altair_chart(yoy)
+
+    st.header("Correlations", divider=True)
+    corrows = st.columns(3)
+
+    # Create a scatter plot with relationship between prices and temp
+    spottemp = pd.concat([dfd["Spot Price"], dfd["Temperature"]], axis=1)
+    corrows[0].scatter_chart(spottemp, x="Temperature", y="Spot Price")
+
+    # Get consumption
+    con = dfd["Consumption"]
+    con = con[con["account"] == acct_radio]["Consumption"]
+    if con.empty:
+        con = dfd["Consumption"]["Consumption"].resample(f"1{freqd[freq_radio]}")
+
+    contemp = pd.concat([con, dfd["Temperature"]], axis=1)
+    corrows[1].scatter_chart(spottemp, x="Temperature", y="Consumption")
+
+    conspot = pd.concat([con, dfd["Spot Price"]], axis=1)
+    corrows[2].scatter_chart(spottemp, x="Spot Price", y="Consumption")
