@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     # Create time series chart
     for i, (title, df) in enumerate(dfd.items()):
-        st.subheader(title)
+        str.columns(3)[1](st.subheader(title))  # Column used to center subheader
         rows = st.columns(2)
         # Time Series
         histdf = pd.DataFrame()
