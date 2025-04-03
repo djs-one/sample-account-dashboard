@@ -177,4 +177,4 @@ if __name__ == "__main__":
         df = accts.reset_index()
         df = df[df["account"] == acctnum]
         st.subheader(f"Account {acctnum}")
-        st.bar_chart(accts.reset_index(), x="DateTime", y="Consumption")
+        st.bar_chart(df.reset_index(), x="DateTime", y="Consumption")
