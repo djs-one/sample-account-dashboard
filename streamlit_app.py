@@ -172,9 +172,8 @@ if __name__ == "__main__":
         horizontal=True,
     )
     st.header("Account comparison", divider=True)
-    accts = dfd["Consumption"].resample(f"1{freqd[freq_radio2]}").sum()
+    accts = dfd["Consumption"]
     for acctnum in [1, 2]:
-        df = accts.reset_index()
-        df = df[df["account"] == acctnum]
+        df = accts[accts["account"] == acctnum].resample(f"1{freqd[freq_radio2]}").sum()
         st.subheader(f"Account {acctnum}")
         st.bar_chart(df.reset_index(), x="DateTime", y="Consumption")
