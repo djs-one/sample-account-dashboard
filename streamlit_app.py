@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     # Create time series chart
     for i, (title, df) in enumerate(dfd.items()):
-        st.columns(3)[1].subheader(title)  # Column used to center subheader
+        st.subheader(title)  # Column used to center subheader
         rows = st.columns(2)
         # Time Series
         histdf = pd.DataFrame()
@@ -152,17 +152,13 @@ if __name__ == "__main__":
     corrows[0].scatter_chart(spottemp, x="Temperature", y="Spot Price")
 
     # Get consumption
-    con = dfd["Consumption"]
-    con = con[con["account"] == acct_radio]["Consumption"]
-    if con.empty:
-        con = (
-            dfd["Consumption"]["Consumption"]
-            .resample(f"1{freqd[freq_radio]}")
-            .apply(method_radio.lower())
-        )
+    con = dfd["Consumption"]["Consumption"]
 
     contemp = pd.concat([con, dfd["Temperature"]], axis=1)
-    corrows[1].scatter_chart(contemp, x="Temperature", y="Consumption")
+    corrows[1].scatter_chart(contemp, x="Temperature", y="Consumption", color="account")
 
     conspot = pd.concat([con, dfd["Spot Price"]], axis=1)
-    corrows[2].scatter_chart(conspot, x="Spot Price", y="Consumption")
+    corrows[2].scatter_chart(conspot, x="Spot Price", y="Consumption", color="account")
+
+    st.header("Account comparison")
+    accts = dfd["Consumption"]
