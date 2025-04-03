@@ -18,6 +18,7 @@ def get_data():
     sheets = xl.sheet_names
     for sheet in sheets:
         df = pd.read_excel(xl, sheet, index_col="DateTime", parse_dates=True)
+        df["Cost"] = df["Consumption"] * df["Spot Price"]
         for col in df.columns:
             out = df[col]
             out.name = sheet
@@ -123,14 +124,19 @@ if __name__ == "__main__":
         )
 
     for i, (title, df) in enumerate(dfd.items()):
-        yoydf = df.resample(f"1{freqd[freq_radio]}")[title].apply(methodd[method_radio])
+        agg = {title: methodd[method_radio]}
+
+        if getattr(df, "columns", None) is not None:
+            agg["account"] = "first"
+
+        yoydf = df.resample(f"1{freqd[freq_radio]}").agg(agg)
 
         color = alt.Color("year(DateTime):O").title("Year")
         if "account" in histdf.columns:
             color += ["account"]
 
         yoy = (
-            alt.Chart(yoydf.reset_index())
+            alt.Chart(yoydf)
             .mark_line()
             .encode(
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
