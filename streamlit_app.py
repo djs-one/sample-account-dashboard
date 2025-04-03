@@ -116,7 +116,7 @@ if __name__ == "__main__":
             )
         )
         # row1[0].altair_chart(histchart)
-        rows[0][i].line_chart(
+        rows[i][0].line_chart(
             histdf.reset_index(),
             x="DateTime",
             y=funcs,
@@ -140,4 +140,4 @@ if __name__ == "__main__":
                 x=alt.X("monthdate(DateTime):O").title("Date"), y=title, color=color
             )
         )
-        rows[1][i].altair_chart(yoy)
+        rows[i][1].altair_chart(yoy)
